@@ -28,6 +28,12 @@
 <script setup>
 import { ref } from "vue";
 
+const props = defineProps({
+  ai: {
+    type: Boolean,
+  },
+});
+
 const boardSize = ref(15);
 const boardNum = ref(boardSize.value * boardSize.value);
 const board = ref([]);
@@ -39,7 +45,21 @@ const currentPiece = ref("");
 const currentPlayer = ref("1");
 const win = ref(false);
 
-function placePiece(index) {
+function findBestMove() {
+  // 这里可以实现一个简单的AI算法来找到最佳棋步
+  // 示例中使用一个随机数生成器来模拟AI决策 - TODO:需要改为更好的落子点
+  const emptyCells = board.value.reduce((acc, cell, index) => {
+    if (cell === "") acc.push(index);
+    return acc;
+  }, []);
+
+  if (emptyCells.length === 0) return -1; // 棋盘已满，无法下棋
+
+  const randomIndex = Math.floor(Math.random() * emptyCells.length);
+  return emptyCells[randomIndex];
+}
+
+function placePiece(index, byAi) {
   if (win.value) {
     alert("Game over");
     return;
@@ -53,8 +73,17 @@ function placePiece(index) {
       setTimeout(() => {
         alert("Player " + currentPlayer.value + " wins!");
       }, 100);
+      return;
     } else {
       currentPlayer.value = currentPlayer.value === "1" ? "2" : "1";
+    }
+    if (props.ai && !byAi) {
+      setTimeout(() => {
+        const aiMove = findBestMove();
+        if (aiMove !== -1) {
+          placePiece(aiMove, true);
+        }
+      }, 1000);
     }
   } else {
     alert("Invalid move");
