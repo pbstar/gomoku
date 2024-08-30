@@ -1,0 +1,21 @@
+@import './base.css';
+
+#app {
+  max-width: 1280px;
+  margin: 0 auto;
+  font-weight: normal;
+}
+
+button{
+  color: inherit;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  transition: all 0.2s ease-in-out;
+  background-color: #4bd211;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+}
+@media (min-width: 1024px) {
+}
