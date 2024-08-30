@@ -1,8 +1,21 @@
 <template>
   <div class="board">
-    <div v-for="(item, index) in board" :key="index" class="board-box" @click="placePiece(index)">
-      <span v-show="item === '1'" class="piece" style="background-color: #000;"></span>
-      <span v-show="item === '2'" class="piece" style="background-color: #fff;"></span>
+    <div
+      v-for="(item, index) in board"
+      :key="index"
+      class="board-box"
+      @click="placePiece(index)"
+    >
+      <span
+        v-show="item === '1'"
+        class="piece"
+        style="background-color: #000"
+      ></span>
+      <span
+        v-show="item === '2'"
+        class="piece"
+        style="background-color: #fff"
+      ></span>
       <i class="current" v-show="currentPiece === index"></i>
       <i v-show="index >= boardSize" class="line1"></i>
       <i v-show="index % boardSize !== boardSize - 1" class="line2"></i>
@@ -13,44 +26,44 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref } from "vue";
 
 const boardSize = ref(15);
 const boardNum = ref(boardSize.value * boardSize.value);
 const board = ref([]);
 for (let i = 0; i < boardNum.value; i++) {
-  board.value.push('');
+  board.value.push("");
 }
 
-const currentPiece = ref('');
-const currentPlayer = ref('1');
+const currentPiece = ref("");
+const currentPlayer = ref("1");
 const win = ref(false);
 
 function placePiece(index) {
   if (win.value) {
-    alert('Game over');
+    alert("Game over");
     return;
   }
-  if (board.value[index] === '') {
-    currentPiece.value = index
+  if (board.value[index] === "") {
+    currentPiece.value = index;
     board.value[index] = currentPlayer.value;
 
     if (checkWin()) {
       win.value = true;
       setTimeout(() => {
-        alert('Player ' + currentPlayer.value + ' wins!');
-      }, 100)
+        alert("Player " + currentPlayer.value + " wins!");
+      }, 100);
     } else {
-      currentPlayer.value = currentPlayer.value === '1' ? '2' : '1';
+      currentPlayer.value = currentPlayer.value === "1" ? "2" : "1";
     }
   } else {
-    alert('Invalid move');
+    alert("Invalid move");
   }
 }
 // 获取处理后的棋盘数组
 function getProcessedBoard(type) {
   const processedBoard = [];
-  if (type === '1') {
+  if (type === "1") {
     //获取行数据
     for (let i = 0; i < boardSize.value; i++) {
       const row = [];
@@ -59,7 +72,7 @@ function getProcessedBoard(type) {
       }
       processedBoard.push(row);
     }
-  } else if (type === '2') {
+  } else if (type === "2") {
     //获取列数据
     for (let i = 0; i < boardSize.value; i++) {
       const row = [];
@@ -68,7 +81,7 @@ function getProcessedBoard(type) {
       }
       processedBoard.push(row);
     }
-  } else if (type === '3') {
+  } else if (type === "3") {
     //获取左上到右下的对角线数据
     let rowNum = 2 * boardSize.value - 1;
     for (let i = 0; i < rowNum; i++) {
@@ -82,7 +95,7 @@ function getProcessedBoard(type) {
       }
       processedBoard.push(row);
     }
-  } else if (type === '4') {
+  } else if (type === "4") {
     //获取左下到右上的对角线数据
     let rowNum = 2 * boardSize.value - 1;
     for (let i = 0; i < rowNum; i++) {
@@ -96,10 +109,8 @@ function getProcessedBoard(type) {
       }
       processedBoard.push(row);
     }
-
   }
   return processedBoard;
-
 }
 // 检查处理后的棋盘数组中是否有玩家获胜
 function checkWinInProcessedBoard(processedBoard) {
@@ -108,7 +119,7 @@ function checkWinInProcessedBoard(processedBoard) {
     const row = processedBoard[i];
     let count = 1;
     for (let j = 1; j < row.length; j++) {
-      if (row[j] === row[j - 1] && row[j] !== '') {
+      if (row[j] === row[j - 1] && row[j] !== "") {
         count++;
       }
     }
@@ -123,24 +134,23 @@ function checkWinInProcessedBoard(processedBoard) {
 function checkWin() {
   let win = false;
   // 检查行
-  let processedBoard = getProcessedBoard('1');
+  let processedBoard = getProcessedBoard("1");
   win = checkWinInProcessedBoard(processedBoard);
   if (win) return true;
   // 检查列
-  processedBoard = getProcessedBoard('2');
+  processedBoard = getProcessedBoard("2");
   win = checkWinInProcessedBoard(processedBoard);
   if (win) return true;
   // 检查左上到右下的对角线
-  processedBoard = getProcessedBoard('3');
+  processedBoard = getProcessedBoard("3");
   win = checkWinInProcessedBoard(processedBoard);
   if (win) return true;
   // 检查右上到左下的对角线
-  processedBoard = getProcessedBoard('4');
+  processedBoard = getProcessedBoard("4");
   win = checkWinInProcessedBoard(processedBoard);
   if (win) return true;
   return win;
 }
-
 </script>
 
 <style scoped>
@@ -155,7 +165,6 @@ function checkWin() {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   padding: 10px;
   box-sizing: content-box;
-
 }
 
 .board-box {
