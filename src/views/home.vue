@@ -1,13 +1,7 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-</script>
-
 <template>
   <div class="home">
     <h1>五子棋</h1>
-    <p>
-      游戏规则：黑白两方轮流下子，先连成五个子的一方获胜。
-    </p>
+    <p>游戏规则：黑白两方轮流下子，先连成五个子的一方获胜。</p>
     <RouterLink to="/play">
       <button>开始游戏</button>
     </RouterLink>
@@ -16,6 +10,11 @@ import { RouterLink, RouterView } from 'vue-router'
     </RouterLink>
   </div>
 </template>
+
+<script setup>
+import { RouterLink } from "vue-router";
+</script>
+
 <style scoped>
 .home {
   display: flex;
@@ -23,7 +22,6 @@ import { RouterLink, RouterView } from 'vue-router'
   align-items: center;
   justify-content: center;
   height: 100vh;
-
 }
 h1 {
   font-size: 30px;
@@ -35,7 +33,6 @@ p {
   text-align: center;
   margin-top: 20px;
   margin-bottom: 20px;
-  
 }
 
 button {

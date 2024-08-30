@@ -1,29 +1,27 @@
-# vue-project-3
+# 五子棋小游戏
 
-This template should help get you started developing with Vue 3 in Vite.
+## 介绍
 
-## Recommended IDE Setup
+五子棋是一个经典的双人游戏，由两人轮流在棋盘上落子，每次落子后，需要在水平、竖直、斜对角三个方向上连成五子，即可获胜。
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## 游戏规则
 
-## Customize configuration
+1. 棋盘是一个 15x15 的网格，每个格点可以是空的或者是一个棋子。
+2. 两人轮流落子，每次落子后，需要在水平、竖直、斜对角三个方向上连成五子，即可获胜。
+3. 棋盘上的棋子只能在空的格子上落子，不能覆盖其他棋子。
+4. 当棋盘上的棋子连成五子时，游戏结束，获胜方获胜。
+5. 如果棋盘上的所有格子都被填满，且没有连成五子，则游戏结束，平局。
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+## 开发准备
 
-## Project Setup
+1. 用 vue 脚手架创建一个新项目
 
-```sh
-npm install
+```
+npm create vue@latest
 ```
 
-### Compile and Hot-Reload for Development
+## 开发思路
 
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
+1. 定义棋盘的状态，用二维数组表示棋盘的状态，用 0 表示空，用 1 表示黑子，用 2 表示白子。
+2. 定义棋盘的样式，用 css 定义棋盘的样式，用背景色表示棋盘的状态，用边框表示棋盘的边界。
+3. 定义棋盘的逻辑，用 js 定义棋盘的逻辑，用鼠标点击棋盘上的格子，将棋子放在格子上，用判断是否连成五子的逻辑，用判断棋盘是否已满的逻辑，用判断游戏是否结束的逻辑。

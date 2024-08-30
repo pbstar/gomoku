@@ -1,5 +1,5 @@
 <template>
-  <div class="about">
+  <div class="playAi">
     <GomokuBoard ai />
   </div>
 </template>
@@ -7,7 +7,7 @@
 import GomokuBoard from "../components/GomokuBoard.vue";
 </script>
 <style>
-.about {
+.playAi {
   min-height: 100vh;
   display: flex;
   align-items: center;
