@@ -33,15 +33,21 @@ const props = defineProps({
     type: Boolean,
   },
 });
+const emit = defineEmits(["win"]);
+
+// 抛出refs方法
+defineExpose({
+  resetBoard,
+  undo
+})
 
 const boardSize = ref(15);
 const boardNum = ref(boardSize.value * boardSize.value);
-const board = ref([]);
-for (let i = 0; i < boardNum.value; i++) {
-  board.value.push("");
-}
+const board = ref(Array.from({ length: boardNum.value }, () => ""));
 
 const currentPiece = ref("");
+const lastCurrentPiece = ref("");
+
 const currentPlayer = ref("1");
 const win = ref(false);
 const aiLoading = ref(false);
@@ -68,12 +74,15 @@ function placePiece(index, byAi) {
   if (aiLoading.value&&!byAi) {
     return;
   }
+  
   if (board.value[index] === "") {
+    lastCurrentPiece.value = currentPiece.value;
     currentPiece.value = index;
     board.value[index] = currentPlayer.value;
 
     if (checkWin()) {
       win.value = true;
+      emit("win", currentPlayer.value);
       setTimeout(() => {
         alert("Player " + currentPlayer.value + " wins!");
       }, 100);
@@ -188,6 +197,28 @@ function checkWin() {
   if (win) return true;
   return win;
 }
+
+// 重置棋盘
+function resetBoard() {
+  board.value = Array.from({ length: boardNum.value }).fill("");
+  currentPiece.value = "";
+  currentPlayer.value = "1";
+  win.value = false;
+}
+
+// 悔棋
+function undo() {
+  if (currentPiece.value === "") {
+    alert("No moves to undo");
+    return;
+  }
+  board.value[currentPiece.value] = "";
+  currentPiece.value = lastCurrentPiece.value;
+  currentPlayer.value = currentPlayer.value === "1"? "2" : "1";
+}
+
+
+
 </script>
 
 <style scoped>
