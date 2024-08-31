@@ -205,7 +205,7 @@ function placePiece(index, byAi) {
           placePiece(aiMove, true);
         }
         aiLoading.value = false;
-      }, 1000);
+      }, 100);
     }
   } else {
     alert("Invalid move");
