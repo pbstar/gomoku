@@ -1,7 +1,7 @@
 <template>
   <div class="play">
     <h1>
-      <span v-show="!winPlayer">Play</span>
+      <span v-show="!winPlayer">双人对战</span>
       <span v-show="winPlayer">
         {{ winPlayer == 1 ? "黑棋" : "白棋" }} 获胜!
       </span>
