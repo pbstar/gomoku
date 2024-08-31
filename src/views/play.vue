@@ -3,11 +3,11 @@
     <h1>
       <span v-show="!winPlayer">Play</span>
       <span v-show="winPlayer">
-        {{winPlayer==1?'黑棋':'白棋'}} 获胜!
+        {{ winPlayer == 1 ? "黑棋" : "白棋" }} 获胜!
       </span>
     </h1>
 
-    <GomokuBoard ref="GomokuBoardDom" @win="winFun"/>
+    <GomokuBoard ref="GomokuBoardDom" @win="winFun" />
     <div class="btns">
       <button @click="resetBoard">重新开始</button>
       <button @click="undo">悔棋</button>
@@ -17,31 +17,29 @@
 </template>
 <script setup>
 import GomokuBoard from "../components/GomokuBoard.vue";
-import { ref, onMounted} from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
 
 const GomokuBoardDom = ref(null);
-const winPlayer = ref('');
+const winPlayer = ref("");
 
 const winFun = (player) => {
   winPlayer.value = player;
-}
+};
 
 const resetBoard = () => {
   GomokuBoardDom.value.resetBoard();
-  winPlayer.value = '';
-}
+  winPlayer.value = "";
+};
 
 const undo = () => {
   GomokuBoardDom.value.undo();
-}
+};
 
 const goback = () => {
-  router.push('/');
-}
-
-
+  router.push("/");
+};
 </script>
 <style>
 .play {
@@ -60,5 +58,4 @@ h1 {
   display: flex;
   gap: 10px;
 }
-
 </style>
