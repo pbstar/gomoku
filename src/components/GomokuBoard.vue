@@ -1,26 +1,28 @@
 <template>
-  <div class="board">
+  <div class="board" @mouseout.self="currentHover = -1">
     <div
       v-for="(item, index) in board"
       :key="index"
       class="board-box"
+      :class="{ hover: currentHover === index }"
       @click="placePiece(index)"
+      @mouseenter="currentHover = index"
     >
       <span
         v-show="item === '1'"
         class="piece"
         style="background-color: #000"
-      ></span>
+      />
       <span
         v-show="item === '2'"
         class="piece"
         style="background-color: #fff"
-      ></span>
-      <i class="current" v-show="currentPiece === index"></i>
-      <i v-show="index >= boardSize" class="line1"></i>
-      <i v-show="index % boardSize !== boardSize - 1" class="line2"></i>
-      <i v-show="index < boardSize * (boardSize - 1)" class="line3"></i>
-      <i v-show="index % boardSize !== 0" class="line4"></i>
+      />
+      <i class="current-piece" v-show="currentPiece === index" />
+      <i v-show="index >= boardSize" class="line line1" />
+      <i v-show="index % boardSize !== boardSize - 1" class="line line2" />
+      <i v-show="index < boardSize * (boardSize - 1)" class="line line3" />
+      <i v-show="index % boardSize !== 0" class="line line4" />
     </div>
   </div>
 </template>
@@ -38,8 +40,10 @@ const emit = defineEmits(["win"]);
 // 抛出refs方法
 defineExpose({
   resetBoard,
-  undo
-})
+  undo,
+});
+
+const currentHover = ref(-1);
 
 const boardSize = ref(15);
 const boardNum = ref(boardSize.value * boardSize.value);
@@ -71,10 +75,10 @@ function placePiece(index, byAi) {
     alert("Game over");
     return;
   }
-  if (aiLoading.value&&!byAi) {
+  if (aiLoading.value && !byAi) {
     return;
   }
-  
+
   if (board.value[index] === "") {
     lastCurrentPiece.value = currentPiece.value;
     currentPiece.value = index;
@@ -214,11 +218,8 @@ function undo() {
   }
   board.value[currentPiece.value] = "";
   currentPiece.value = lastCurrentPiece.value;
-  currentPlayer.value = currentPlayer.value === "1"? "2" : "1";
+  currentPlayer.value = currentPlayer.value === "1" ? "2" : "1";
 }
-
-
-
 </script>
 
 <style scoped>
@@ -242,6 +243,12 @@ function undo() {
   cursor: pointer;
 }
 
+.hover {
+  .line {
+    background-color: #f00;
+  }
+}
+
 .piece {
   display: block;
   width: 20px;
@@ -256,7 +263,7 @@ function undo() {
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
 }
 
-.current {
+.current-piece {
   display: block;
   width: 25px;
   height: 25px;
@@ -269,10 +276,7 @@ function undo() {
   z-index: 5;
 }
 
-.line1,
-.line2,
-.line3,
-.line4 {
+.line {
   position: absolute;
   background-color: #00000085;
   transition: opacity 0.3s ease;
