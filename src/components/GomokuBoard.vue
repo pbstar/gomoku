@@ -56,18 +56,118 @@ const currentPlayer = ref("1");
 const win = ref(false);
 const aiLoading = ref(false);
 
+// 检查处理后的棋盘数组中AI的分数
+function checkScoreInProcessedBoard(processedBoard, layerIdx, posIdx) {
+  const layer = processedBoard[layerIdx];
+
+  let score = 0;
+  let localStatus = [];
+  // 增加1格视野以考虑边缘情况
+  for (let j = posIdx - 5; j <= posIdx + 5; j++) {
+    if (j < 0 || j >= layer.length) {
+      continue;
+    } else {
+      localStatus.push(layer[j]);
+    }
+  }
+
+  // 胜利积分
+  const preLayer = layer;
+  preLayer[posIdx] = "2";
+  if (checkWinInProcessedBoard(preLayer)) {
+    score += 10000;
+  }
+
+  // 个数积分
+  const aiPoint = localStatus.filter((item) => item === "2").length;
+  const userPoint = localStatus.filter((item) => item === "1").length;
+  score = aiPoint - 2 * userPoint;
+
+  // 临近积分
+  if (layer[posIdx - 1] === "2" || layer[posIdx + 1] === "2") {
+    score += 2 * aiPoint;
+  }
+
+  if (layer[posIdx - 1] === "1" || layer[posIdx + 1] === "1") {
+    score -= 4 * userPoint;
+  }
+
+  if (layer[posIdx - 2] === "2" || layer[posIdx + 2] === "2") {
+    score += aiPoint;
+  }
+
+  if (layer[posIdx - 2] === "1" || layer[posIdx + 2] === "1") {
+    score -= 2 * userPoint;
+  }
+
+  // 边界扣分
+  if (posIdx === 0 || posIdx === layer.length) {
+    score -= 5;
+  }
+
+  // 防守加分
+  if (userPoint >= 3 && aiPoint === 0) {
+    score += 10;
+    if (layer[posIdx - 1] == "1" || layer[posIdx + 1] == "1") {
+      score += 8 * userPoint;
+    }
+
+    if (layer[posIdx - 2] == "1" || layer[posIdx + 2] == "1") {
+      score += 4 * userPoint;
+    }
+  }
+
+  return score;
+}
+
+// 处理index 转换为 layerIdx 和 posIdx
+function layerIdxTrans(type, index) {
+  if (type === "1") {
+    return [Math.floor(index / boardSize.value), index % boardSize.value];
+  } else if (type === "2") {
+    return [index % boardSize.value, Math.floor(index / boardSize.value)];
+  }
+}
+
+function evaluateMove(index) {
+  let scores = [
+    checkScoreInProcessedBoard(
+      getProcessedBoard("1"),
+      ...layerIdxTrans("1", index)
+    ),
+    checkScoreInProcessedBoard(
+      getProcessedBoard("2"),
+      ...layerIdxTrans("2", index)
+    ),
+    // checkScoreInProcessedBoard(getProcessedBoard("3")),
+    // checkScoreInProcessedBoard(getProcessedBoard("4")),
+  ];
+
+  let score = Math.max(...scores);
+
+  return score;
+}
+
 function findBestMove() {
-  // 这里可以实现一个简单的AI算法来找到最佳棋步
-  // 示例中使用一个随机数生成器来模拟AI决策 - TODO:需要改为更好的落子点
-  const emptyCells = board.value.reduce((acc, cell, index) => {
-    if (cell === "") acc.push(index);
-    return acc;
-  }, []);
+  let bestScore = -Infinity;
+  let bestMoves = [];
+  let bestMove = -1;
 
-  if (emptyCells.length === 0) return -1; // 棋盘已满，无法下棋
+  for (let i = 0; i < boardSize.value * boardSize.value; i++) {
+    if (board.value[i] === "") {
+      let score = evaluateMove(i);
+      if (score > bestScore) {
+        bestScore = score;
+        bestMoves = [i];
+      } else if (score === bestScore) {
+        bestMoves.push(i);
+      }
+    }
+  }
 
-  const randomIndex = Math.floor(Math.random() * emptyCells.length);
-  return emptyCells[randomIndex];
+  bestMove = bestMoves[Math.floor(Math.random() * bestMoves.length)];
+
+  return bestMove;
 }
 
 function placePiece(index, byAi) {
@@ -76,6 +176,7 @@ function placePiece(index, byAi) {
     return;
   }
   if (aiLoading.value && !byAi) {
+    board.value[index] = currentPlayer.value;
     return;
   }
 
@@ -108,6 +209,7 @@ function placePiece(index, byAi) {
     alert("Invalid move");
   }
 }
+
 // 获取处理后的棋盘数组
 function getProcessedBoard(type) {
   const processedBoard = [];
@@ -180,6 +282,7 @@ function checkWinInProcessedBoard(processedBoard) {
   }
   return win;
 }
+
 // 检查是否有玩家获胜
 function checkWin() {
   let win = false;
