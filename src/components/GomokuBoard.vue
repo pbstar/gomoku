@@ -102,8 +102,8 @@ function checkScoreInProcessedBoard(processedBoard, layerIdx, posIdx) {
   }
 
   // 边界扣分
-  if (posIdx === 0 || posIdx === layer.length) {
-    score -= 5;
+  if (posIdx <= 2 || posIdx >= layer.length - 2) {
+    score -= 20;
   }
 
   // 防守加分
@@ -153,6 +153,10 @@ function evaluateMove(index) {
   ];
 
   let score = Math.max(...scores);
+
+  if (score === 0) {
+    score = Math.min(...scores);
+  }
 
   return score;
 }
