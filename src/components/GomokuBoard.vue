@@ -127,6 +127,11 @@ function layerIdxTrans(type, index) {
     return [Math.floor(index / boardSize.value), index % boardSize.value];
   } else if (type === "2") {
     return [index % boardSize.value, Math.floor(index / boardSize.value)];
+  } else if (type === '3') {
+    const x = Math.floor(index / boardSize.value)
+    const y = index % boardSize.value
+
+    return [x + y, Math.min(boardSize.value - 1 - x, y) ]
   }
 }
 
@@ -140,7 +145,10 @@ function evaluateMove(index) {
       getProcessedBoard("2"),
       ...layerIdxTrans("2", index)
     ),
-    // checkScoreInProcessedBoard(getProcessedBoard("3")),
+    checkScoreInProcessedBoard(
+      getProcessedBoard("3"),
+      ...layerIdxTrans("3", index)
+    ),
     // checkScoreInProcessedBoard(getProcessedBoard("4")),
   ];
 
