@@ -44,6 +44,7 @@ for (let i = 0; i < boardNum.value; i++) {
 const currentPiece = ref("");
 const currentPlayer = ref("1");
 const win = ref(false);
+const aiLoading = ref(false);
 
 function findBestMove() {
   // 这里可以实现一个简单的AI算法来找到最佳棋步
@@ -64,6 +65,9 @@ function placePiece(index, byAi) {
     alert("Game over");
     return;
   }
+  if (aiLoading.value&&!byAi) {
+    return;
+  }
   if (board.value[index] === "") {
     currentPiece.value = index;
     board.value[index] = currentPlayer.value;
@@ -78,11 +82,13 @@ function placePiece(index, byAi) {
       currentPlayer.value = currentPlayer.value === "1" ? "2" : "1";
     }
     if (props.ai && !byAi) {
+      aiLoading.value = true;
       setTimeout(() => {
         const aiMove = findBestMove();
         if (aiMove !== -1) {
           placePiece(aiMove, true);
         }
+        aiLoading.value = false;
       }, 1000);
     }
   } else {
@@ -150,11 +156,13 @@ function checkWinInProcessedBoard(processedBoard) {
     for (let j = 1; j < row.length; j++) {
       if (row[j] === row[j - 1] && row[j] !== "") {
         count++;
+      } else {
+        count = 1;
       }
-    }
-    if (count >= 5) {
-      win = true;
-      break;
+      if (count >= 5) {
+        win = true;
+        return win;
+      }
     }
   }
   return win;
