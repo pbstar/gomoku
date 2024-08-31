@@ -49,6 +49,7 @@ const boardSize = ref(15);
 const boardNum = ref(boardSize.value * boardSize.value);
 const board = ref(Array.from({ length: boardNum.value }, () => ""));
 
+const moveHistory = ref([]); // 记录下棋历史
 const currentPiece = ref("");
 const lastCurrentPiece = ref("");
 
@@ -184,6 +185,7 @@ function placePiece(index, byAi) {
     lastCurrentPiece.value = currentPiece.value;
     currentPiece.value = index;
     board.value[index] = currentPlayer.value;
+    moveHistory.value.push({ index, player: currentPlayer.value }); // 记录下棋步骤
 
     if (checkWin()) {
       win.value = true;
@@ -308,6 +310,7 @@ function checkWin() {
 // 重置棋盘
 function resetBoard() {
   board.value = Array.from({ length: boardNum.value }).fill("");
+  moveHistory.value = []; // 重置下棋历史
   currentPiece.value = "";
   currentPlayer.value = "1";
   win.value = false;
@@ -315,13 +318,16 @@ function resetBoard() {
 
 // 悔棋
 function undo() {
-  if (currentPiece.value === "") {
-    alert("No moves to undo");
-    return;
-  }
-  board.value[currentPiece.value] = "";
-  currentPiece.value = lastCurrentPiece.value;
-  currentPlayer.value = currentPlayer.value === "1" ? "2" : "1";
+  if (moveHistory.value.length) {
+    const lastMove = moveHistory.value.pop();
+    board.value[lastMove.index] = "";
+
+    currentPlayer.value = lastMove.player;
+    win.value = false;
+
+    const lastCurrentPiece = moveHistory.value.at(-1);
+    currentPiece.value = lastCurrentPiece ? lastCurrentPiece.index : "";
+  } else resetBoard();
 }
 </script>
 
