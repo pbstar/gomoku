@@ -51,7 +51,6 @@ const board = ref(Array.from({ length: boardNum.value }, () => ""));
 
 const moveHistory = ref([]); // 记录下棋历史
 const currentPiece = ref("");
-const lastCurrentPiece = ref("");
 
 const currentPlayer = ref("1");
 const win = ref(false);
@@ -192,35 +191,32 @@ function placePiece(index, byAi) {
     board.value[index] = currentPlayer.value;
     return;
   }
+  if (board.value[index]) {
+    return
+  }
+  currentPiece.value = index;
+  board.value[index] = currentPlayer.value;
+  moveHistory.value.push({ index, player: currentPlayer.value }); // 记录下棋步骤
 
-  if (board.value[index] === "") {
-    lastCurrentPiece.value = currentPiece.value;
-    currentPiece.value = index;
-    board.value[index] = currentPlayer.value;
-    moveHistory.value.push({ index, player: currentPlayer.value }); // 记录下棋步骤
-
-    if (checkWin()) {
-      win.value = true;
-      emit("win", currentPlayer.value);
-      setTimeout(() => {
-        alert("Player " + currentPlayer.value + " wins!");
-      }, 100);
-      return;
-    } else {
-      currentPlayer.value = currentPlayer.value === "1" ? "2" : "1";
-    }
-    if (props.ai && !byAi) {
-      aiLoading.value = true;
-      setTimeout(() => {
-        const aiMove = findBestMove();
-        if (aiMove !== -1) {
-          placePiece(aiMove, true);
-        }
-        aiLoading.value = false;
-      }, 100);
-    }
+  if (checkWin()) {
+    win.value = true;
+    emit("win", currentPlayer.value);
+    setTimeout(() => {
+      alert("Player " + currentPlayer.value + " wins!");
+    }, 100);
+    return;
   } else {
-    alert("Invalid move");
+    currentPlayer.value = currentPlayer.value === "1" ? "2" : "1";
+  }
+  if (props.ai && !byAi) {
+    aiLoading.value = true;
+    setTimeout(() => {
+      const aiMove = findBestMove();
+      if (aiMove !== -1) {
+        placePiece(aiMove, true);
+      }
+      aiLoading.value = false;
+    }, 100);
   }
 }
 
